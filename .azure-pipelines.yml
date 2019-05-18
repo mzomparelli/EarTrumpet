@@ -9,7 +9,7 @@ variables:
   solution: 'EarTrumpet.vs15.sln'
   buildPlatform: 'x86'
   buildConfiguration: 'Release'
-  prebuild.sign-eartrumpet: '$(Agent.WorkFolder)/azuresigntool.exe sign -kvu https://withinnetwork.vault.azure.net -fd sha256 -kvi "$(keyvault.clientid)" -kvs "$(keyvault.secret)" -kvc "$(keyvault.certificates.selfsigned.name)" -tr "$(keyvault.services.timestamp)" Build/$(buildConfiguration)/Eartrumpet.exe'
+  prebuild.sign-eartrumpet: '$(Agent.WorkFolder)\azuresigntool.exe sign -kvu https://withinnetwork.vault.azure.net -fd sha256 -kvi "$(keyvault.clientid)" -kvs "$(keyvault.secret)" -kvc "$(keyvault.certificates.selfsigned.name)" -tr "$(keyvault.services.timestamp)" Build/$(buildConfiguration)/Eartrumpet.exe'
 
 steps:
 - task: NuGetToolInstaller@0
