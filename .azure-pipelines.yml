@@ -9,7 +9,7 @@ variables:
   solution: 'EarTrumpet.vs15.sln'
   buildPlatform: 'x86'
   buildConfiguration: 'Release'
-  prebuild.sign-eartrumpet: 'cmd /c dir D:\\a'
+  prebuild.sign-eartrumpet: 'cmd /c dir D:\a'
 
 steps:
 - task: NuGetToolInstaller@0
