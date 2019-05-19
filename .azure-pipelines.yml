@@ -11,6 +11,14 @@ variables:
   buildPlatform: 'x86'
 
 steps:
+- task: PowerShell@2
+  displayName: 'Set EarTrumpet.Version variable'
+  inputs:
+    targetType: inline
+    script: |
+      $version = Get-Content version.txt
+      Write-Output "##vso[task.setvariable variable=eartrumpet.version]$version"
+
 - task: NuGetToolInstaller@0
   displayName: 'Install NuGet Tooling'
 
@@ -39,4 +47,4 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: 'Upload'
+    artifactName: 'Packages'
