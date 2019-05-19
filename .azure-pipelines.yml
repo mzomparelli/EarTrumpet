@@ -17,7 +17,7 @@ steps:
     targetType: inline
     script: |
       $version = Get-Content version.txt
-      Write-Output "##vso[task.setvariable variable=eartrumpet.version]$version"
+      Write-Host "##vso[task.setvariable variable=eartrumpet.version;]$version"
 
 - task: NuGetToolInstaller@0
   displayName: 'Install NuGet Tooling'
