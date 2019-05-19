@@ -11,13 +11,11 @@ variables:
   buildPlatform: 'x86'
 
 steps:
-- task: PowerShell@2
-  displayName: 'Set EarTrumpet.Version variable'
+- task: CopyFiles@2
+  displayName: 'Promote version.txt to build artifact'
   inputs:
-    targetType: inline
-    script: |
-      $version = Get-Content version.txt
-      Write-Host "##vso[task.setvariable variable=eartrumpet.version;]$version"
+    Contents: 'version.txt'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: NuGetToolInstaller@0
   displayName: 'Install NuGet Tooling'
