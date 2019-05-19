@@ -14,13 +14,6 @@ steps:
 - task: NuGetToolInstaller@0
   displayName: 'Install NuGet Tooling'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Install AzureSignTool'
-  inputs:
-    command: custom
-    custom: 'tool'
-    arguments: 'install --tool-path "$(Agent.WorkFolder)" azuresigntool'
-
 - task: NuGetCommand@2
   displayName: 'Restore NuGet Packages'
   inputs:
