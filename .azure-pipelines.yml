@@ -11,6 +11,18 @@ variables:
   buildPlatform: 'x86'
 
 steps:
+- task: GitVersion@4
+  displayName: 'Initialize Git Version'
+  inputs:
+    updateAssemblyInfo: false
+
+- task: PowerShell@2
+  displayName: 'Set build number'
+  inputs:
+    targetType: inline
+    script: |
+     Write-Host "##vso[build.updatebuildnumber]$(GitVersion.SemVer)"
+
 - task: CopyFiles@2
   displayName: 'Promote version.txt to build artifact'
   inputs:
