@@ -45,13 +45,23 @@ steps:
      $cfg = Get-Content ".\EarTrumpet\app.config"
      $cfg | ForEach-Object { $_.Replace("{bugsnag.apikey}", "$(bugsnag.apikey)") } | Set-Content ".\EarTrumpet\app.config"
 
+- task: PowerShell@2
+  displayName: 'Change publisher for dev packaging'
+  inputs:
+   targetType: inline
+   script: |
+    $manifestPath = ".\EarTrumpet.Package\Package.appxmanifest"
+    $manifest = [xml](Get-Content $manifestPath)
+    $manifest.Package.Identity.Publisher = "CN=File-New-Project"
+    $manifest.Save($manifestPath)
+
 - task: MSBuild@1
-  displayName: 'Build EarTrumpet packages'
+  displayName: 'Build EarTrumpet dev packages'
   inputs:
     solution: 'EarTrumpet.Package\\EarTrumpet.Package.wapproj'
     platform: 'x86'
     configuration: '$(buildConfiguration)'
-    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=CI /p:GenerateAppInstallerFile=true /p:AppInstallerUri="https://install.eartrumpet.app/$(Build.SourceBranch)" /p:AppInstallerUpdateFrequency=1 /p:AppInstallerCheckForUpdateFrequency=OnApplicationRun'
+    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=CI /p:GenerateAppInstallerFile=true /p:AppInstallerUri="https://install.eartrumpet.app/$(Build.SourceBranchName)" /p:AppInstallerUpdateFrequency=1 /p:AppInstallerCheckForUpdateFrequency=OnApplicationRun'
     maximumCpuCount: true
 
 - task: PublishBuildArtifacts@1
