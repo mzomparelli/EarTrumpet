@@ -61,7 +61,7 @@ steps:
     solution: 'EarTrumpet.Package\\EarTrumpet.Package.wapproj'
     platform: 'x86'
     configuration: '$(buildConfiguration)'
-    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=CI /p:GenerateAppInstallerFile=true /p:AppInstallerUri="https://install.eartrumpet.app/$(Build.SourceBranchName)" /p:AppInstallerUpdateFrequency=1 /p:AppInstallerCheckForUpdateFrequency=OnApplicationRun'
+    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=CI /p:GenerateAppInstallerFile=true /p:AppInstallerUri="https://install.eartrumpet.app/$(Build.SourceBranch)" /p:AppInstallerUpdateFrequency=1 /p:AppInstallerCheckForUpdateFrequency=OnApplicationRun'
     maximumCpuCount: true
 
 - task: PublishBuildArtifacts@1
