@@ -52,7 +52,7 @@ steps:
    script: |
     $manifestPath = ".\EarTrumpet.Package\Package.appxmanifest"
     $manifest = [xml](Get-Content $manifestPath)
-    $manifest.Package.Identity.Publisher = "C=US,S=Virginia,L=Purcellville,O=File-New-Project,CN=File-New-Project"
+    $manifest.Package.Identity.Publisher = "CN=File-New-Project, O=File-New-Project, L=Purcellville, S=Virginia, C=US"
     $manifest.Save($manifestPath)
 
 - task: MSBuild@1
