@@ -24,7 +24,7 @@ steps:
      Write-Host "##vso[build.updatebuildnumber]$(GitVersion.SemVer)"
 
 - task: PowerShell@2
-  displayName: 'Write AssemblySemVer to version.txt'
+  displayName: 'Write version quad to version.txt'
   inputs:
     targetType: inline
     script: |
