@@ -61,19 +61,8 @@ steps:
     solution: 'EarTrumpet.Package\\EarTrumpet.Package.wapproj'
     platform: 'x86'
     configuration: '$(buildConfiguration)'
-    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=CI /p:GenerateAppInstallerFile=true /p:AppInstallerUri="https://install.eartrumpet.app/$(Build.SourceBranch)" /p:AppInstallerUpdateFrequency=1 /p:AppInstallerCheckForUpdateFrequency=OnApplicationRun'
+    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=CI /p:GenerateAppInstallerFile=true /p:AppInstallerUri="https://install.eartrumpet.app/$(Build.SourceBranch)" /p:AppInstallerUpdateFrequency=1 /p:AppInstallerCheckForUpdateFrequency=OnApplicationRun /p:AppxPackageTestDir=.\\'
     maximumCpuCount: true
-
-- task: PowerShell@2
-  displayName: 'Fix AppInstaller manifest'
-  inputs:
-   targetType: inline
-   script: |
-    $manifestPath = "$(Build.ArtifactStagingDirectory)\EarTrumpet.Package.appinstaller"
-    $manifest = [xml](Get-Content $manifestPath)
-    $segment = ([Uri]$manifest.AppInstaller.MainBundle.Uri).Segments[5]
-    $manifest.AppInstaller.MainBundle.Uri = $manifest.AppInstaller.MainBundle.Uri.Replace($segment, "")
-    $manifest.Save($manifestPath)
 
 - task: PublishBuildArtifacts@1
   inputs:
