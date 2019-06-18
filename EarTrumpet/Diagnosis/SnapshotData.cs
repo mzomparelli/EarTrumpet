@@ -31,6 +31,11 @@ namespace EarTrumpet.Diagnosis
                 return new Dictionary<string, Func<object>>
                 {
                     { "version", () => EarTrumpet.App.Current.GetVersion().ToString() },
+                    { "gdiObjects", () => User32.GetGuiResources(Kernel32.GetCurrentProcess(), User32.GR_FLAGS.GR_GDIOBJECTS) },
+                    { "userObjects", () => User32.GetGuiResources(Kernel32.GetCurrentProcess(), User32.GR_FLAGS.GR_USEROBJECTS) },
+                    { "globalGdiObjects", () => User32.GetGuiResources(User32.GR_GLOBAL, User32.GR_FLAGS.GR_USEROBJECTS) },
+                    { "globalUserObjects", () => User32.GetGuiResources(User32.GR_GLOBAL, User32.GR_FLAGS.GR_USEROBJECTS) },
+                    { "handleCount", () => GetProcessHandleCount() },
 #if DEBUG
                     { "releaseStage", () => "development" },
 #else
@@ -86,6 +91,12 @@ namespace EarTrumpet.Diagnosis
                     { "addons", () => AddonManager.GetDiagnosticInfo() },
                 };
             }
+        }
+
+        private static uint GetProcessHandleCount()
+        {
+            Kernel32.GetProcessHandleCount(Kernel32.GetCurrentProcess(), out uint handleCount);
+            return handleCount;
         }
     }
 }
