@@ -28,7 +28,7 @@ steps:
   inputs:
     targetType: inline
     script: |
-     Set-Content "$(Build.ArtifactStagingDirectory)\version.txt" "$(GitVersion.AssemblySemVer)"
+     Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\version.txt" "$(GitVersion.AssemblySemVer)"
 
 - task: NuGetToolInstaller@0
   displayName: 'Install NuGet Tooling'
@@ -59,3 +59,8 @@ steps:
   inputs:
     pathToPublish: '$(Build.ArtifactStagingDirectory)/AppxUpload'
     artifactName: 'AppxUpload'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)/Metadata'
+    artifactName: 'Metadata'
