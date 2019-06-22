@@ -24,7 +24,7 @@ steps:
      Write-Host "##vso[build.updatebuildnumber]$(GitVersion.SemVer)"
 
 - task: PowerShell@2
-  displayName: 'Write version quad to version.txt'
+  displayName: 'Write metadata'
   inputs:
     targetType: inline
     script: |
@@ -32,6 +32,8 @@ steps:
       Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\version.txt" "$(GitVersion.AssemblySemVer)"
       Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\semver.txt" "$(GitVersion.SemVer)"
       Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\branch.txt" "$(GitVersion.BranchName)"
+      Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\commits.txt" "$(GitVersion.CommitsSinceVersionSource)"
+      Set-Content ".\EarTrumpet\Version.txt" "$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
 
 - task: NuGetToolInstaller@0
   displayName: 'Install NuGet Tooling'
