@@ -46,26 +46,16 @@ steps:
      $cfg = Get-Content ".\EarTrumpet\app.config"
      $cfg | ForEach-Object { $_.Replace("{bugsnag.apikey}", "$(bugsnag.apikey)") } | Set-Content ".\EarTrumpet\app.config"
 
-- task: PowerShell@2
-  displayName: 'Change publisher for dev packaging'
-  inputs:
-   targetType: inline
-   script: |
-    $manifestPath = ".\EarTrumpet.Package\Package.appxmanifest"
-    $manifest = [xml](Get-Content $manifestPath)
-    $manifest.Package.Identity.Publisher = "CN=File-New-Project, O=File-New-Project, L=Purcellville, S=Virginia, C=US"
-    $manifest.Save($manifestPath)
-
 - task: MSBuild@1
-  displayName: 'Build EarTrumpet dev packages'
+  displayName: 'Build EarTrumpet appxupload'
   inputs:
     solution: 'EarTrumpet.Package\\EarTrumpet.Package.wapproj'
     platform: 'x86'
     configuration: '$(buildConfiguration)'
-    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=CI /p:GenerateAppInstallerFile=true /p:AppInstallerUri="https://install.eartrumpet.app/$(Build.SourceBranch)" /p:AppInstallerUpdateFrequency=1 /p:AppInstallerCheckForUpdateFrequency=OnApplicationRun /p:AppxPackageTestDir=.\\'
+    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)/AppxUpload" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=CI'
     maximumCpuCount: true
 
 - task: PublishBuildArtifacts@1
   inputs:
-    pathToPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: 'Packages'
+    pathToPublish: '$(Build.ArtifactStagingDirectory)/AppxUpload'
+    artifactName: 'AppxUpload'
