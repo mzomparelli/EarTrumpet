@@ -29,10 +29,10 @@ steps:
     targetType: inline
     script: |
       New-Item -ItemType Directory "$(Build.ArtifactStagingDirectory)\Metadata" -ErrorAction Ignore
-      Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\version.txt" "$(GitVersion.AssemblySemVer)"
       Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\semver.txt" "$(GitVersion.SemVer)"
       Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\branch.txt" "$(GitVersion.BranchName)"
       Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\commits.txt" "$(GitVersion.CommitsSinceVersionSource)"
+      Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\version.txt" "$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
       Set-Content ".\EarTrumpet\Version.txt" "$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
 
 - task: NuGetToolInstaller@0
