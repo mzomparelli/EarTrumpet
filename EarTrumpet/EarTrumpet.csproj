@@ -438,6 +438,6 @@
 
   <Target Name="BeforeBuild" DependsOnTargets="GetVersion">
     <Message Text="GitVersion_InformationalVersion: $(GitVersion_InformationalVersion)"/>
-    <Exec Command="powershell -executionpolicy Bypass -noprofile &quot;$(ProjectDir)\prebuild.ps1&quot; $(GitVersion_AssemblySemVer)" />
+    <Exec Command="powershell -executionpolicy Bypass -noprofile &quot;$(ProjectDir)\prebuild.ps1&quot; $(GitVersion_MajorMinorPatch).$(GitVersion_CommitsSinceVersionSource)" />
   </Target>
 </Project>
