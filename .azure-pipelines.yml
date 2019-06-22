@@ -28,7 +28,8 @@ steps:
   inputs:
     targetType: inline
     script: |
-     Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\version.txt" "$(GitVersion.AssemblySemVer)"
+      New-Item -ItemType Directory "$(Build.ArtifactStagingDirectory)\Metadata" -ErrorAction Ignore
+      Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\version.txt" "$(GitVersion.AssemblySemVer)"
 
 - task: NuGetToolInstaller@0
   displayName: 'Install NuGet Tooling'
