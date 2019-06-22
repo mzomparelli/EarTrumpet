@@ -62,7 +62,7 @@ steps:
     solution: 'EarTrumpet.Package\\EarTrumpet.Package.wapproj'
     platform: 'x86'
     configuration: '$(buildConfiguration)'
-    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)/Sideload" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:GenerateAppInstallerFile=true /p:AppxPackageTestDir="$(Build.ArtifactStagingDirectory)\Sideload\" /p:AppInstallerUri=https://install.eartrumpet.app'
+    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)/Sideload" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:GenerateAppInstallerFile=true /p:AppxPackageTestDir="$(Build.ArtifactStagingDirectory)\\Sideload\\" /p:AppInstallerUri=https://install.eartrumpet.app'
     maximumCpuCount: true
     clean: false
 
