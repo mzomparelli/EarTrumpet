@@ -56,10 +56,25 @@ steps:
     msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)/AppxUpload" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=CI'
     maximumCpuCount: true
 
+- task: MSBuild@1
+  displayName: 'Build EarTrumpet appinstaller/sideload'
+  inputs:
+    solution: 'EarTrumpet.Package\\EarTrumpet.Package.wapproj'
+    platform: 'x86'
+    configuration: '$(buildConfiguration)'
+    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)/Sideload" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:GenerateAppInstallerFile=true /p:AppxPackageTestDir="$(Build.ArtifactStagingDirectory)\Sideload\" /p:AppInstallerUri=https://install.eartrumpet.app'
+    maximumCpuCount: true
+    clean: false
+
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(Build.ArtifactStagingDirectory)/AppxUpload'
     artifactName: 'AppxUpload'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)/Sideload'
+    artifactName: 'Sideload'
 
 - task: PublishBuildArtifacts@1
   inputs:
