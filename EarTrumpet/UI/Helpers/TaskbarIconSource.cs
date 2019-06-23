@@ -27,6 +27,9 @@ namespace EarTrumpet.UI.Helpers
         public Icon Current { get; private set; }
 
         private readonly DeviceCollectionViewModel _collection;
+        private readonly LazyLoadCache<IconKind, LazyLoadCache<uint, Icon>> _dpiCache;
+        private readonly LazyLoadCache<IconKind, LazyLoadCache<bool, Icon>> _highContrastCache;
+        private readonly LazyLoadCache<IconKind, Icon> _lightThemeCache;
         private readonly AppSettings _settings;
         private bool _isMouseOver;
         private string _hash;
@@ -36,6 +39,26 @@ namespace EarTrumpet.UI.Helpers
         {
             _collection = collection;
             _settings = settings;
+
+            // Cache dark theme icons at each DPI level.
+            _dpiCache = new LazyLoadCache<IconKind, LazyLoadCache<uint, Icon>>(iconId => new LazyLoadCache<uint, Icon>(dpi => LoadIcon(iconId, dpi)));
+
+            // Non-destructively convert the dark icons to light theme (special case for EarTrumpet icon: load a specific resource).
+            _lightThemeCache = new LazyLoadCache<IconKind, Icon>(iconId =>
+            {
+                return (iconId == IconKind.EarTrumpet) ?
+                    _dpiCache.Resolve(IconKind.EarTrumpet_LightTheme).Resolve(WindowsTaskbar.Dpi) :
+                    ColorIconForLightTheme(_dpiCache.Resolve(iconId).Resolve(WindowsTaskbar.Dpi), iconId);
+            });
+
+            // Non-destructively convert the dark icons to HighContrast colors to both rest and MouseOver states.
+            _highContrastCache = new LazyLoadCache<IconKind, LazyLoadCache<bool, Icon>>(iconId =>
+            {
+                return new LazyLoadCache<bool, Icon>(isMouseOver =>
+                {
+                    return ColorIconForHighContrast(_dpiCache.Resolve(iconId).Resolve(WindowsTaskbar.Dpi), iconId, isMouseOver);
+                });
+            });
 
             _settings.UseLegacyIconChanged += (_, __) => CheckForUpdate();
             collection.TrayPropertyChanged += OnTrayPropertyChanged;
@@ -56,11 +79,8 @@ namespace EarTrumpet.UI.Helpers
             {
                 Trace.WriteLine($"TaskbarIconSource Changed: {nextHash}");
                 _hash = nextHash;
-                using (var old = Current)
-                {
-                    Current = SelectAndLoadIcon(_kind);
-                    Changed?.Invoke(this);
-                }
+                Current = SelectAndLoadIcon(_kind);
+                Changed?.Invoke(this);
             }
         }
 
@@ -81,28 +101,15 @@ namespace EarTrumpet.UI.Helpers
             {
                 if (System.Windows.SystemParameters.HighContrast)
                 {
-                    using (var icon = LoadIcon(kind))
-                    {
-                        return ColorIconForHighContrast(icon, kind, _isMouseOver);
-                    }
+                    return _highContrastCache.Resolve(kind).Resolve(_isMouseOver);
                 }
                 else if (SystemSettings.IsSystemLightTheme)
                 {
-                    if (kind == IconKind.EarTrumpet)
-                    {
-                        return LoadIcon(IconKind.EarTrumpet_LightTheme);
-                    }
-                    else
-                    {
-                        using (var icon = LoadIcon(kind))
-                        {
-                            return ColorIconForLightTheme(icon, kind);
-                        }
-                    }
+                    return _lightThemeCache.Resolve(kind);
                 }
                 else
                 {
-                    return LoadIcon(kind);
+                    return _dpiCache.Resolve(kind).Resolve(WindowsTaskbar.Dpi);
                 }
             }
             // Legacy fallback if SndVolSSD.dll icons are unavailable.
@@ -113,9 +120,8 @@ namespace EarTrumpet.UI.Helpers
             }
         }
 
-        private static Icon LoadIcon(IconKind kind)
+        private static Icon LoadIcon(IconKind kind, uint dpi)
         {
-            uint dpi = WindowsTaskbar.Dpi;
             switch (kind)
             {
                 case IconKind.EarTrumpet:
