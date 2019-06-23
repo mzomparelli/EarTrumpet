@@ -1,5 +1,21 @@
 trigger:
-- experiment/pipeline
+  branches:
+    include:
+      - master
+      - review/*
+      - experiment/*
+      - dev
+  paths:
+    exclude:
+      - '**/*.md'
+
+pr:
+  branches:
+    include:
+      - dev
+  paths:
+    exclude:
+      - '**/*.md'
 
 pool:
   vmImage: vs2017-win2016
