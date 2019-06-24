@@ -61,7 +61,7 @@ jobs:
         Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\branch.txt" "$(GitVersion.BranchName)"
         Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\commits.txt" "$(GitVersion.CommitsSinceVersionSource)"
 
-        if("$(Channel)" == "Store") {
+        if("$(Channel)" -eq "Store") {
           $Version = "$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
         } else {
           $Version = "$(AssemblySemVer)"
@@ -93,7 +93,7 @@ jobs:
       script: |
         $manifest = [xml](Get-Content ".\EarTrumpet.Package\Package.appxmanifest")
         $manifest.Package.Identity.Publisher = "$(Publisher)"
-        if("$(Channel)" == "AppInstaller") {
+        if("$(Channel)" -eq "AppInstaller") {
           $manifest.Package.Properties.DisplayName = "EarTrumpet $(GitVersion.BranchName)"
           $manifest.Package.Applications.Application[0].VisualElements.DisplayName = "EarTrumpet ($Branch)"
         }
@@ -137,7 +137,7 @@ jobs:
         $manifest.AppInstaller.Dependencies.Package | % { $_.Uri = "https://install.eartrumpet.app/unused" }
         $manifest.Save($manifestPath)
     condition: and(succeeded(), eq(variables['Channel'], 'AppInstaller'))
-    
+
   - task: PublishBuildArtifacts@1
     inputs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)/Sideload'
