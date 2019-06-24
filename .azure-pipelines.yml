@@ -106,7 +106,7 @@ jobs:
         $storeAssociation = [xml](Get-Content $storeAssociationPath)
         $storeAssociation.StoreAssociation.Publisher = "$(Publisher)"
         if("$(Channel)" -eq "AppInstaller") {
-          $storeAssociation.StoreAssociation.ProductReservedInfo.ReservedNames.ReservedName[0] = "EarTrumpet ($Branch)"
+          $storeAssociation.StoreAssociation.ProductReservedInfo.ReservedNames.ReservedName = "EarTrumpet ($Branch)"
         }
         $storeAssociation.Save($storeAssociationPath)
 
