@@ -104,11 +104,11 @@ jobs:
         $manifest.Save($manifestPath)
 
         $storeAssociation = [xml](Get-Content $storeAssociationPath)
-        $storeAssociation.Publisher = "$(Publisher)"
+        $storeAssociation.StoreAssociation.Publisher = "$(Publisher)"
         if("$(Channel)" -eq "AppInstaller") {
-          $storeAssociation.ProductReservedInfo.ReservedNames.ReservedName[0] = "EarTrumpet ($Branch)"
+          $storeAssociation.StoreAssociation.ProductReservedInfo.ReservedNames.ReservedName[0] = "EarTrumpet ($Branch)"
         }
-        $storeAssociation.Save($storeAssociationPath)
+        $storeAssociation.StoreAssociation.Save($storeAssociationPath)
 
   - task: MSBuild@1
     displayName: 'Build EarTrumpet appxupload package'
