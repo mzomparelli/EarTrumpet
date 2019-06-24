@@ -133,9 +133,9 @@ jobs:
         $manifestPath = "$(Build.ArtifactStagingDirectory)/Sideload/EarTrumpet.Package.appinstaller"
         $manifest = [xml](Get-Content $manifestPath)
         $manifest.AppInstaller.Uri = "https://install.eartrumpet.app/$(GitVersion.BranchName)/EarTrumpet.Package.appinstaller"
-        $manifest.AppInstaller.MainBundle.Uri = "https://install.eartrumpet.app/$(GitVersion.BranchName)/EarTrumpet.Package_"$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"_x86.appxbundle
-        $manifest.AppInstaller.MainBundle.Publisher = $(Publisher)
-        $manifest.AppInstaller.Dependencies.Package | % { $_.Uri = "https://install.eartrumpet.app/unused" }
+        $manifest.AppInstaller.MainBundle.Uri = "https://install.eartrumpet.app/$(GitVersion.BranchName)/EarTrumpet.Package_$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)_x86.appxbundle"
+        $manifest.AppInstaller.MainBundle.Publisher = "$(Publisher)"
+        $manifest.AppInstaller.Dependencies.Package | ForEach-Object { $_.Uri = "https://install.eartrumpet.app/unused" }
         $manifest.Save($manifestPath)
     condition: and(succeeded(), eq(variables['Channel'], 'AppInstaller'))
 
