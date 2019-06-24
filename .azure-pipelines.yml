@@ -125,6 +125,18 @@ jobs:
       maximumCpuCount: true
     condition: and(succeeded(), eq(variables['Channel'], 'AppInstaller'))
 
+  - task: PowerShell@2
+    displayName: 'Adjust appinstaller manifest'
+    inputs:
+      targetType: inline
+      script: |
+        $manifest = [xml](Get-Content "$(Build.ArtifactStagingDirectory)/Sideload/EarTrumpet.Package.appinstaller")
+        $manifest.AppInstaller.Uri = "https://install.eartrumpet.app/$(GitVersion.BranchName)/EarTrumpet.Package.appinstaller"
+        $manifest.AppInstaller.MainBundle.Uri = "https://install.eartrumpet.app/$(GitVersion.BranchName)/EarTrumpet.Package_"$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"_x86.appxbundle
+        $manifest.AppInstaller.MainBundle.Publisher = $(Publisher)
+        $manifest.AppInstaller.Dependencies.Package | % { $_.Uri = "https://install.eartrumpet.app/unused" }
+        $manifest.Save($manifestPath)
+
   - task: PublishBuildArtifacts@1
     inputs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)/Sideload'
