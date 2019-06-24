@@ -136,7 +136,8 @@ jobs:
         $manifest.AppInstaller.MainBundle.Publisher = $(Publisher)
         $manifest.AppInstaller.Dependencies.Package | % { $_.Uri = "https://install.eartrumpet.app/unused" }
         $manifest.Save($manifestPath)
-
+    condition: and(succeeded(), eq(variables['Channel'], 'AppInstaller'))
+    
   - task: PublishBuildArtifacts@1
     inputs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)/Sideload'
