@@ -108,7 +108,7 @@ jobs:
         if("$(Channel)" -eq "AppInstaller") {
           $storeAssociation.StoreAssociation.ProductReservedInfo.ReservedNames.ReservedName[0] = "EarTrumpet ($Branch)"
         }
-        $storeAssociation.StoreAssociation.Save($storeAssociationPath)
+        $storeAssociation.Save($storeAssociationPath)
 
   - task: MSBuild@1
     displayName: 'Build EarTrumpet appxupload package'
