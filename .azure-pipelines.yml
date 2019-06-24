@@ -64,7 +64,7 @@ jobs:
         if("$(Channel)" -eq "Store") {
           $Version = "$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
         } else {
-          $Version = "$(AssemblySemVer)"
+          $Version = "$(GitVersion.AssemblySemVer)"
         }
 
         Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\version.txt" $Version
