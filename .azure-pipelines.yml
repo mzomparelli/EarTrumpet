@@ -25,6 +25,7 @@ variables:
 
 jobs:
 - job: Build
+  continueOnError: 'false'
   pool:
     vmImage: vs2017-win2016
 
@@ -91,13 +92,14 @@ jobs:
     inputs:
       targetType: inline
       script: |
-        $manifest = [xml](Get-Content ".\EarTrumpet.Package\Package.appxmanifest")
+        $manifestPath = ".\EarTrumpet.Package\Package.appxmanifest"
+        $manifest = [xml](Get-Content $manifestPath)
         $manifest.Package.Identity.Publisher = "$(Publisher)"
         if("$(Channel)" -eq "AppInstaller") {
           $manifest.Package.Properties.DisplayName = "EarTrumpet $(GitVersion.BranchName)"
           $manifest.Package.Applications.Application[0].VisualElements.DisplayName = "EarTrumpet ($Branch)"
         }
-        $manifest.Save($ManifestPath)
+        $manifest.Save($manifestPath)
 
   - task: MSBuild@1
     displayName: 'Build EarTrumpet appxupload package'
@@ -136,7 +138,6 @@ jobs:
         $manifest.AppInstaller.MainBundle.Uri = "https://install.eartrumpet.app/$(GitVersion.BranchName)/EarTrumpet.Package_$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)_x86.appxbundle"
         $manifest.AppInstaller.MainBundle.Publisher = "$(Publisher)"
         $manifest.AppInstaller.Dependencies.Package | ForEach-Object { $_.Uri = "https://install.eartrumpet.app/unused" }
-        $manifest.Save
         $manifest.Save($manifestPath)
       pwsh: true
     condition: and(succeeded(), eq(variables['Channel'], 'AppInstaller'))
