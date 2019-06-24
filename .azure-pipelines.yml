@@ -99,14 +99,14 @@ jobs:
         $manifest.Package.Identity.Publisher = "$(Publisher)"
         if("$(Channel)" -eq "AppInstaller") {
           $manifest.Package.Properties.DisplayName = "EarTrumpet $(GitVersion.BranchName)"
-          $manifest.Package.Applications.Application[0].VisualElements.DisplayName = "EarTrumpet ($Branch)"
+          $manifest.Package.Applications.Application[0].VisualElements.DisplayName = "EarTrumpet ($(GitVersion.BranchName))"
         }
         $manifest.Save($manifestPath)
 
         $storeAssociation = [xml](Get-Content $storeAssociationPath)
         $storeAssociation.StoreAssociation.Publisher = "$(Publisher)"
         if("$(Channel)" -eq "AppInstaller") {
-          $storeAssociation.StoreAssociation.ProductReservedInfo.ReservedNames.ReservedName = "EarTrumpet ($Branch)"
+          $storeAssociation.StoreAssociation.ProductReservedInfo.ReservedNames.ReservedName = "EarTrumpet ($(GitVersion.BranchName))"
         }
         $storeAssociation.Save($storeAssociationPath)
 
