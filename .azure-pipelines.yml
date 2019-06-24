@@ -88,11 +88,13 @@ jobs:
         $cfg | ForEach-Object { $_.Replace("{bugsnag.apikey}", "$(bugsnag.apikey)") } | Set-Content ".\EarTrumpet\app.config"
 
   - task: PowerShell@2
-    displayName: 'Adjust manifest'
+    displayName: 'Adjust manifest and store association'
     inputs:
       targetType: inline
       script: |
         $manifestPath = ".\EarTrumpet.Package\Package.appxmanifest"
+        $storeAssociationPath = ".\EarTrumpet.Package\Package.StoreAssociation.xml"
+
         $manifest = [xml](Get-Content $manifestPath)
         $manifest.Package.Identity.Publisher = "$(Publisher)"
         if("$(Channel)" -eq "AppInstaller") {
@@ -100,6 +102,13 @@ jobs:
           $manifest.Package.Applications.Application[0].VisualElements.DisplayName = "EarTrumpet ($Branch)"
         }
         $manifest.Save($manifestPath)
+
+        $storeAssociation = [xml](Get-Content $storeAssociationPath)
+        $storeAssociation.Publisher = "$(Publisher)"
+        if("$(Channel)" -eq "AppInstaller") {
+          $storeAssociation.ProductReservedInfo.ReservedNames.ReservedName[0] = "EarTrumpet ($Branch)"
+        }
+        $storeAssociation.Save($storeAssociationPath)
 
   - task: MSBuild@1
     displayName: 'Build EarTrumpet appxupload package'
@@ -112,6 +121,7 @@ jobs:
     condition: and(succeeded(), eq(variables['Channel'], 'Store'))
 
   - task: PublishBuildArtifacts@1
+    displayName: 'Publish appxupload artifacts'
     inputs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)/AppxUpload'
       artifactName: 'AppxUpload'
@@ -143,12 +153,14 @@ jobs:
     condition: and(succeeded(), eq(variables['Channel'], 'AppInstaller'))
 
   - task: PublishBuildArtifacts@1
+    displayName: 'Publish appinstaller/sideload package artifacts'
     inputs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)/Sideload'
       artifactName: 'Sideload'
     condition: and(succeeded(), eq(variables['Channel'], 'AppInstaller'))
 
   - task: PublishBuildArtifacts@1
+    displayName: 'Publish metadata artifacts'
     inputs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)/Metadata'
       artifactName: 'Metadata'
