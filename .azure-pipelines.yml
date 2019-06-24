@@ -136,7 +136,7 @@ jobs:
         $manifest.AppInstaller.MainBundle.Uri = "https://install.eartrumpet.app/$(GitVersion.BranchName)/EarTrumpet.Package_$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)_x86.appxbundle"
         $manifest.AppInstaller.MainBundle.Publisher = "$(Publisher)"
         $manifest.AppInstaller.Dependencies.Package | ForEach-Object { $_.Uri = "https://install.eartrumpet.app/unused" }
-        $manifest.Save($manifestPath)
+        $manifest.Save([string]$manifestPath)
     condition: and(succeeded(), eq(variables['Channel'], 'AppInstaller'))
 
   - task: PublishBuildArtifacts@1
