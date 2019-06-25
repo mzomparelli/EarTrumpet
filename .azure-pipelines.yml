@@ -99,7 +99,7 @@ jobs:
         $manifest.Package.Identity.Publisher = "$(Publisher)"
         if("$(Channel)" -eq "AppInstaller") {
           $manifest.Package.Properties.DisplayName = "EarTrumpet ($(GitVersion.BranchName))"
-          $manifest.Package.Applications.Application[0].VisualElements.DisplayName = "EarTrumpet ($(GitVersion.BranchName))"
+          $manifest.Package.Applications.Application.VisualElements.DisplayName = "EarTrumpet ($(GitVersion.BranchName))"
         }
         $manifest.Save($manifestPath)
 
