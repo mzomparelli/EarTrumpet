@@ -1,0 +1,86 @@
+trigger:
+- experiment/pipeline
+
+pool:
+  vmImage: vs2017-win2016
+
+variables:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  solution: 'EarTrumpet.vs15.sln'
+  buildConfiguration: 'Release'
+  buildPlatform: 'x86'
+
+steps:
+- task: GitVersion@4
+  displayName: 'Initialize Git Version'
+  inputs:
+    updateAssemblyInfo: false
+
+- task: PowerShell@2
+  displayName: 'Set build number'
+  inputs:
+    targetType: inline
+    script: |
+     Write-Host "##vso[build.updatebuildnumber]$(GitVersion.SemVer)"
+
+- task: PowerShell@2
+  displayName: 'Write metadata'
+  inputs:
+    targetType: inline
+    script: |
+      New-Item -ItemType Directory "$(Build.ArtifactStagingDirectory)\Metadata" -ErrorAction Ignore
+      Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\semver.txt" "$(GitVersion.SemVer)"
+      Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\branch.txt" "$(GitVersion.BranchName)"
+      Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\commits.txt" "$(GitVersion.CommitsSinceVersionSource)"
+      Set-Content "$(Build.ArtifactStagingDirectory)\Metadata\version.txt" "$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
+      Set-Content ".\EarTrumpet\Version.txt" "$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
+
+- task: NuGetToolInstaller@0
+  displayName: 'Install NuGet Tooling'
+
+- task: NuGetCommand@2
+  displayName: 'Restore NuGet Packages'
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: PowerShell@2
+  displayName: 'Set Bugsnag API Key'
+  inputs:
+   targetType: inline
+   script: |
+     $cfg = Get-Content ".\EarTrumpet\app.config"
+     $cfg | ForEach-Object { $_.Replace("{bugsnag.apikey}", "$(bugsnag.apikey)") } | Set-Content ".\EarTrumpet\app.config"
+
+- task: MSBuild@1
+  displayName: 'Build EarTrumpet appxupload'
+  inputs:
+    solution: 'EarTrumpet.Package\\EarTrumpet.Package.wapproj'
+    platform: 'x86'
+    configuration: '$(buildConfiguration)'
+    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)/AppxUpload" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=CI'
+    maximumCpuCount: true
+
+- task: MSBuild@1
+  displayName: 'Build EarTrumpet appinstaller/sideload'
+  inputs:
+    solution: 'EarTrumpet.Package\\EarTrumpet.Package.wapproj'
+    platform: 'x86'
+    configuration: '$(buildConfiguration)'
+    msbuildArguments: '/p:AppxBundle=Always /p:AppxPackageDir="$(Build.ArtifactStagingDirectory)/Sideload" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:GenerateAppInstallerFile=true /p:AppxPackageTestDir="$(Build.ArtifactStagingDirectory)\\Sideload\\" /p:AppInstallerUri=https://install.eartrumpet.app'
+    maximumCpuCount: true
+    clean: false
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)/AppxUpload'
+    artifactName: 'AppxUpload'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)/Sideload'
+    artifactName: 'Sideload'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)/Metadata'
+    artifactName: 'Metadata'
