@@ -1,4 +1,5 @@
-﻿using EarTrumpet.Interop.Helpers;
+﻿using EarTrumpet.DataModel;
+using EarTrumpet.Interop.Helpers;
 using System;
 using System.Windows;
 
@@ -31,9 +32,17 @@ namespace EarTrumpet.UI.Themes
 
         private static void ApplyAcrylicToWindow(Window window, string refValue)
         {
-            AccentPolicyLibrary.EnableAcrylic(window,
-                Manager.Current.ResolveRef(window, refValue),
-                Interop.User32.AccentFlags.DrawAllBorders);
+            if (!SystemParameters.HighContrast && 
+                SystemSettings.IsTransparencyEnabled)
+            {
+                AccentPolicyLibrary.EnableAcrylic(window,
+                    Manager.Current.ResolveRef(window, refValue),
+                    Interop.User32.AccentFlags.None);
+            }
+            else
+            {
+                AccentPolicyLibrary.DisableAcrylic(window);
+            }
         }
     }
 }
