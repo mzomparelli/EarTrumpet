@@ -37,7 +37,7 @@ namespace EarTrumpet.UI.Themes
             {
                 AccentPolicyLibrary.EnableAcrylic(window,
                     Manager.Current.ResolveRef(window, refValue),
-                    Interop.User32.AccentFlags.None);
+                    Interop.User32.AccentFlags.DrawAllBorders);
             }
             else
             {

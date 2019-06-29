@@ -101,7 +101,7 @@ namespace EarTrumpet
 
         private void DisplayFirstRunExperience()
         {
-            if (!_settings.HasShownFirstRun)
+       //     if (!_settings.HasShownFirstRun)
             {
                 Trace.WriteLine($"App DisplayFirstRunExperience Showing welcome dialog");
                 _settings.HasShownFirstRun = true;

@@ -142,6 +142,9 @@ namespace EarTrumpet.UI.Views
             }
 
             this.Move(newTop * this.DpiHeightFactor(), newLeft * this.DpiWidthFactor(), newHeight * this.DpiHeightFactor(), Width * this.DpiWidthFactor());
+
+            MaxWidth = Width;
+            MaxHeight = newHeight;
         }
 
         private void EnableOrDisableAcrylic()
@@ -150,12 +153,28 @@ namespace EarTrumpet.UI.Views
                 !SystemParameters.HighContrast && 
                 SystemSettings.IsTransparencyEnabled)
             {
-                AccentPolicyLibrary.EnableAcrylic(this, Themes.Manager.Current.ResolveRef(this, "AcrylicColor_Flyout"), User32.AccentFlags.None);
+                AccentPolicyLibrary.EnableAcrylic(this, Themes.Manager.Current.ResolveRef(this, "AcrylicColor_Flyout"), GetAccentFlags());
             }
             else
             {
                 AccentPolicyLibrary.DisableAcrylic(this);
             }
+        }
+
+        private User32.AccentFlags GetAccentFlags()
+        {
+            switch (WindowsTaskbar.Current.Location)
+            {
+                case WindowsTaskbar.Position.Left:
+                    return User32.AccentFlags.DrawRightBorder | User32.AccentFlags.DrawTopBorder;
+                case WindowsTaskbar.Position.Right:
+                    return User32.AccentFlags.DrawLeftBorder | User32.AccentFlags.DrawTopBorder;
+                case WindowsTaskbar.Position.Top:
+                    return User32.AccentFlags.DrawLeftBorder | User32.AccentFlags.DrawBottomBorder;
+                case WindowsTaskbar.Position.Bottom:
+                    return User32.AccentFlags.DrawTopBorder | User32.AccentFlags.DrawLeftBorder;
+            }
+            return User32.AccentFlags.None;
         }
     }
 }

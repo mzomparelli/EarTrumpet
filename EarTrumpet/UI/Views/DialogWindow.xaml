@@ -12,12 +12,19 @@
         b:FrameworkElementEx.DisplaySettingsChanged="{Binding DisplaySettingsChanged}"
         b:FrameworkElementEx.FlowDirection="Auto"
         Closing="{Event:Binding OnClosing}"
-        ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
-        Style="{StaticResource DialogWindowStyle}"
         TextOptions.TextFormattingMode="Display"
         UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen">
+    <Window.Style>
+        <Style TargetType="{x:Type Window}" BasedOn="{StaticResource DialogWindowStyle}">
+            <Setter Property="WindowChrome.WindowChrome">
+                <Setter.Value>
+                    <WindowChrome CaptionHeight="31" ResizeBorderThickness="0" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Style>
     <Grid>
         <DockPanel LastChildFill="True">
             <Grid DockPanel.Dock="Top">

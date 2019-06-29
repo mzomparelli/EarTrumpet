@@ -23,6 +23,7 @@ namespace EarTrumpet.UI.Themes
         public bool IsHighContrast => SystemParameters.HighContrast;
         public bool UseAccentColorOnWindowBorders => SystemSettings.UseAccentColorOnWindowBorders;
         public bool UseDynamicScrollbars => SystemSettings.UseDynamicScrollbars;
+        public bool IsTransparencyEnabled => SystemSettings.IsTransparencyEnabled;
 
         private DispatcherTimer _themeChangeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
         private Win32Window _messageWindow;
