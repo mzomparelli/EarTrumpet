@@ -11,12 +11,22 @@ namespace EarTrumpet.UI.ViewModels
         public ICommand OpenDiagnosticsCommand { get; }
         public ICommand OpenAboutCommand { get; }
         public ICommand OpenFeedbackCommand { get; }
+        public ICommand OpenPrivacyCommand { get; }
+
         public string AboutText { get; }
 
-        private Action _openDiagnostics;
-
-        public EarTrumpetAboutPageViewModel(Action openDiagnostics) : base(null)
+        public bool IsTelemetryEnabled
         {
+            get => _settings.IsTelemetryEnabled;
+            set => _settings.IsTelemetryEnabled = value;
+        }
+
+        private readonly Action _openDiagnostics;
+        private readonly AppSettings _settings;
+
+        public EarTrumpetAboutPageViewModel(Action openDiagnostics, AppSettings settings) : base(null)
+        {
+            _settings = settings;
             _openDiagnostics = openDiagnostics;
             Glyph = "\xE946";
             Title = Properties.Resources.AboutTitle;
@@ -25,6 +35,7 @@ namespace EarTrumpet.UI.ViewModels
             OpenAboutCommand = new RelayCommand(OpenAbout);
             OpenDiagnosticsCommand = new RelayCommand(OpenDiagnostics);
             OpenFeedbackCommand = new RelayCommand(OpenFeedbackHub);
+            OpenPrivacyCommand = new RelayCommand(OpenPrivacy);
         }
 
         private void OpenDiagnostics()
@@ -39,6 +50,7 @@ namespace EarTrumpet.UI.ViewModels
         }
 
         private void OpenFeedbackHub() => ProcessHelper.StartNoThrow("windows-feedback:///?appid=40459File-New-Project.EarTrumpet_1sdd7yawvg6ne!EarTrumpet");
+        private void OpenPrivacy() => ProcessHelper.StartNoThrow("https://github.com/File-New-Project/EarTrumpet/blob/master/PRIVACY.md");
         private void OpenAbout() => ProcessHelper.StartNoThrow("https://github.com/File-New-Project/EarTrumpet");
     }
 }

@@ -2,6 +2,8 @@
 using EarTrumpet.Interop.Helpers;
 using System;
 using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
 
 namespace EarTrumpet
 {
@@ -110,6 +112,32 @@ namespace EarTrumpet
         {
             get => _settings.HasKey("hasShownFirstRun");
             set => _settings.Set("hasShownFirstRun", value);
+        }
+
+        public bool IsTelemetryEnabled
+        {
+            get
+            {
+                if (!Features.IsTelemetryConfigurable)
+                {
+                    // Telemetry is ON until it becomes configurable.
+                    return true;
+                }
+                return _settings.Get("IsTelemetryEnabled", IsTelemetryEnabledByDefault());
+            }
+            set => _settings.Set("IsTelemetryEnabled", value);
+        }
+
+        private bool IsTelemetryEnabledByDefault()
+        {
+            // Discussion on what to include:
+            // https://gist.github.com/henrik/1688572
+            var europeanUnionRegions = new string[]
+            {
+                "AL","AD","AT","AZ","BY","BE","BA","BG","HR","CY","CZ","DK","EE","FI","FR","GE","DE","GR","HU","IS","IE","IT","KZ","XK","LV","LI","LT","LU","MK","MT","MD","MC","ME","NL","NO","PL","PT","RO","RU","SM","RS","SK", "SI","ES","SE","CH","TR","UA","GB","VA"
+            };
+            var region = new RegionInfo(CultureInfo.CurrentCulture.LCID).TwoLetterISORegionName.ToUpper();
+            return !europeanUnionRegions.Contains(region);
         }
     }
 }

@@ -1,6 +1,7 @@
 using EarTrumpet.DataModel.WindowsAudio;
 using EarTrumpet.Diagnosis;
 using EarTrumpet.Extensibility.Hosting;
+using EarTrumpet.Extensions;
 using EarTrumpet.Interop.Helpers;
 using EarTrumpet.UI.Helpers;
 using EarTrumpet.UI.ViewModels;
@@ -38,7 +39,7 @@ namespace EarTrumpet
             HasIdentity = PackageHelper.CheckHasIdentity();
             PackageVersion = PackageHelper.GetVersion(HasIdentity);
             _settings = new AppSettings();
-            _errorReporter = new ErrorReporter();
+            _errorReporter = new ErrorReporter(_settings);
 
             if (SingleInstanceAppMutex.TakeExclusivity())
             {
@@ -115,7 +116,7 @@ namespace EarTrumpet
                 Trace.WriteLine($"App DisplayFirstRunExperience Showing welcome dialog");
                 _settings.HasShownFirstRun = true;
 
-                var dialog = new DialogWindow { DataContext = new WelcomeViewModel() };
+                var dialog = new DialogWindow { DataContext = new WelcomeViewModel(_settings) };
                 dialog.Show();
             }
         }
@@ -212,7 +213,7 @@ namespace EarTrumpet
                     {
                         new EarTrumpetShortcutsPageViewModel(_settings),
                         new EarTrumpetLegacySettingsPageViewModel(_settings),
-                        new EarTrumpetAboutPageViewModel(() => _errorReporter.DisplayDiagnosticData())
+                        new EarTrumpetAboutPageViewModel(() => _errorReporter.DisplayDiagnosticData(), _settings)
                     });
 
             var allCategories = new List<SettingsCategoryViewModel>();

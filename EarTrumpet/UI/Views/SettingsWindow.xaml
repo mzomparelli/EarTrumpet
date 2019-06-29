@@ -6,6 +6,7 @@
         xmlns:b="clr-namespace:EarTrumpet.UI.Behaviors"
         xmlns:ctl="clr-namespace:EarTrumpet.UI.Controls"
         xmlns:datamodel="clr-namespace:EarTrumpet.DataModel"
+        xmlns:local="clr-namespace:EarTrumpet"
         xmlns:resx="clr-namespace:EarTrumpet.Properties"
         xmlns:vm="clr-namespace:EarTrumpet.UI.ViewModels"
         Name="WindowRoot"
@@ -139,6 +140,24 @@
                         <TextBlock VerticalAlignment="Center"
                                    Style="{StaticResource BodyText}"
                                    Text="© File-New-Project" />
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="{x:Type StackPanel}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Source={x:Static local:Features.IsTelemetryConfigurable}}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <CheckBox Margin="12,24,12,-6"
+                                      HorizontalAlignment="Left"
+                                      Content="{x:Static resx:Resources.PrivacyCheckboxText}"
+                                      IsChecked="{Binding IsTelemetryEnabled, Mode=TwoWay}" />
+                            <TextBlock Style="{StaticResource HyperlinkBlock}"><Hyperlink Command="{Binding OpenPrivacyCommand}">
+                                    <Run Text="{x:Static resx:Resources.PrivacyLinkText}" />
+                                </Hyperlink></TextBlock>
+                        </StackPanel>
                         <TextBlock Style="{StaticResource HyperlinkBlock}"><Hyperlink Command="{Binding OpenAboutCommand}">
                                 <Run Text="{x:Static resx:Resources.WebsiteText}" />
                             </Hyperlink></TextBlock>
